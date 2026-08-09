@@ -2,22 +2,22 @@ class Relay < Formula
   desc "Local, evidence-first continuity for AI-assisted software work"
   homepage "https://github.com/ictechgy/relay-continuity"
   license "MIT"
-  version "0.2.0-rc.9"
+  version "0.2.0-rc.10"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/ictechgy/relay-continuity/releases/download/v0.2.0-rc.9/relay-macos-arm64"
-      sha256 "0a6a3dc2cd1c2048fc92e966fd735e0f283d9f856b1a6aa129c9fc485664dcb1"
+      url "https://github.com/ictechgy/relay-continuity/releases/download/v0.2.0-rc.10/relay-macos-arm64"
+      sha256 "54746aae852399c4e9f6ab5631ec4759d64c82fbb2f7f66cc80b079ded41fb33"
     else
-      url "https://github.com/ictechgy/relay-continuity/releases/download/v0.2.0-rc.9/relay-macos-x86_64"
-      sha256 "95bf151da8d5149b5a05b9ac902d831052ecd2528c46a187d3243825f7cad9a2"
+      url "https://github.com/ictechgy/relay-continuity/releases/download/v0.2.0-rc.10/relay-macos-x86_64"
+      sha256 "f300a32a170f6d4ff22f0d333b0cdba56f32708a44a6183e7725b6f0a950d45f"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/ictechgy/relay-continuity/releases/download/v0.2.0-rc.9/relay-linux-x86_64"
-      sha256 "eb337d87a85984913ce88133afcaf77a061528b5db6bae6d811980a00b4a9b93"
+      url "https://github.com/ictechgy/relay-continuity/releases/download/v0.2.0-rc.10/relay-linux-x86_64"
+      sha256 "0c4dbb87b634f487d93cecc7acb930ca7ab26ec7d05072f118eb5115bdd03e41"
     end
   end
 
