@@ -1,10 +1,15 @@
+# typed: strict
+# frozen_string_literal: true
+
+# Homebrew formula draft for ContextGuard.
+# Replace URL/SHA/tag during release packaging; do not publish with SHA placeholder.
 class ContextGuard < Formula
   include Language::Python::Shebang
 
   desc "Local-first context guardrails for AI coding agents"
   homepage "https://github.com/ictechgy/context-guard"
-  url "https://github.com/ictechgy/context-guard/archive/refs/tags/v0.6.0.tar.gz"
-  sha256 "81a1617ef30cf613f159a52a30a40f9dd6b8be84612f1c87c1c2d15ccb320151"
+  url "https://github.com/ictechgy/context-guard/archive/refs/tags/v0.7.0.tar.gz"
+  sha256 "7e25520d48e61d1dd9294f865eedc0ca2dc78a4eb5b17d6fdacfe85fe146ec51"
   license "Apache-2.0"
 
   depends_on "python@3.12"
