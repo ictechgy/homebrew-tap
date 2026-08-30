@@ -8,8 +8,8 @@ class ContextGuard < Formula
 
   desc "Local-first context guardrails for AI coding agents"
   homepage "https://github.com/ictechgy/context-guard"
-  url "https://github.com/ictechgy/context-guard/archive/refs/tags/v0.8.0.tar.gz"
-  sha256 "48ceefc338fbe8a7157af06ab7d929b273ee6e862d94ba1d8073c3f9d819ccb2"
+  url "https://github.com/ictechgy/context-guard/archive/refs/tags/v0.9.0.tar.gz"
+  sha256 "fb925626d2cf36ac2a19cc33d9fe0433924ef6ccc190be1058dfcb48a166fe1c"
   license "Apache-2.0"
 
   depends_on "python@3.12"
