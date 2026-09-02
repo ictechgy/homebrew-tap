@@ -18,10 +18,17 @@ class Cartograph < Formula
 
         xcode-select --install
 
-      Then point it at an index store, or let it find the one your build already wrote:
+      Then build once so the compiler writes an index store, and run a query.
+      Cartograph finds the store on its own:
 
-        swift build -Xswiftc -index-store-path -Xswiftc .index-store
-        cartograph dead --index-store .index-store
+        swift build
+        cartograph dead --strict
+
+      For an Xcode project:
+
+        xcodebuild build -scheme MyApp COMPILER_INDEX_STORE_ENABLE=YES \\
+          -derivedDataPath DerivedData
+        cartograph dead --index-store DerivedData/Index.noindex/DataStore
     EOS
   end
 
