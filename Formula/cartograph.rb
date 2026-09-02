@@ -4,7 +4,6 @@ class Cartograph < Formula
   url "https://github.com/ictechgy/cartograph/releases/download/0.1.0/cartograph-0.1.0-macos-universal.tar.gz"
   sha256 "1c10285ec78fa31ecc6dd0b5063b34f83deb7399d93a14e842437a51bfe8a927"
   license "MIT"
-  version "0.1.0"
 
   depends_on macos: :sonoma
 
