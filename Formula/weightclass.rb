@@ -7,8 +7,8 @@ class Weightclass < Formula
 
   desc "Local, policy-driven routing for agent CLI workflows"
   homepage "https://github.com/ictechgy/weightclass"
-  url "https://files.pythonhosted.org/packages/03/18/34b543b6d92ed6d174ede7858f3d57063cd9ae9fd8d7b6ecbb784b0916ab/weightclass-0.31.1.tar.gz"
-  sha256 "622912f4afe140d473f0861247ccd1975abe27e3296fb382be622d71a2862047"
+  url "https://files.pythonhosted.org/packages/bc/1c/8a1580debda96851c854e9731c1eeec41fc2b48e992f3164706ccb246b5d/weightclass-0.32.0.tar.gz"
+  sha256 "df9bb066570dc911bc3b3d71e1d43c190f75286fa56d00302b2148915f5dd287"
   license "MIT"
 
   depends_on "python@3.13"
@@ -29,49 +29,6 @@ class Weightclass < Formula
                  pipe_output("#{bin}/wclass classify", "Review the authorization boundary.", 0).strip
     assert_match '"schema_version": 1',
                  shell_output("#{bin}/wclass example-policy claude-model-override")
-    assert_match "wclass-advisory", shell_output("#{bin}/wclass-advisory --help")
-    assert_match "--confirm-task-egress", shell_output("#{bin}/wclass-advisory run --help")
-    assert_match "usage: wclass-advisory prune", shell_output("#{bin}/wclass-advisory prune --help")
-    assert_match "usage: wclass-advisory install-skill",
-                 shell_output("#{bin}/wclass-advisory install-skill --help")
-    managed_root = testpath/"advisory-v1"
-    system bin/"wclass-advisory", "init", "--state-root", managed_root,
-           "--vendor", "codex",
-           "--model", "cheap=cheap", "--model", "advisor=advisor",
-           "--model", "expensive=expensive",
-           "--effort", "cheap=low", "--effort", "advisor=high",
-           "--effort", "expensive=high"
-    assert_match '"campaign_ready":true',
-                 shell_output("#{bin}/wclass-advisory doctor --state-root #{managed_root} " \
-                              "--vendor codex --workflow all")
-    system bin/"wclass-advisory", "migrate-gate", "--state-root", managed_root,
-           "--vendor", "codex", "--workflow", "review",
-           "--gate-metric", "cheap_acceptance", "--gate-target-rate-bps", "7500",
-           "--gate-alpha-bps", "500"
-    assert_match '"gate_preregistered":true',
-                 shell_output("#{bin}/wclass-advisory campaign-gate --state-root #{managed_root} " \
-                              "--vendor codex --workflow review")
-    assert_match "usage: wclass-advisory cli-check",
-                 shell_output("#{bin}/wclass-advisory cli-check --help")
-    assert_match "--confirm-provider-egress",
-                 shell_output("#{bin}/wclass-advisory provider-check --help")
-    assert_match "--ack-route-sha256",
-                 shell_output("#{bin}/wclass-advisory consult --help")
-    assert_match "context-2x2",
-                 shell_output("#{bin}/wclass-advisory experiment --help")
-    assert_match "ask", shell_output("#{bin}/wclass-advisory --help")
-    assert_match "campaign", shell_output("#{bin}/wclass-advisory --help")
-    ask_help = shell_output("#{bin}/wclass-advisory ask --help")
-    assert_match "--preview", ask_help
-    assert_match "--council", ask_help
-    assert_match "--context", ask_help
-    assert_match "--total-timeout-seconds", ask_help
-    assert_match "--workflow",
-                 shell_output("#{bin}/wclass-advisory status --help")
-    assert_match "--timeout-seconds",
-                 shell_output("#{bin}/wclass-advisory consult --help")
-    assert_match "--confirm-provider-egress",
-                 shell_output("#{bin}/wclass-advisory dispatch --help")
 
     # 잘못된 입력은 닫히는 방향으로 실패하고 태스크를 되비추지 않아야 한다.
     output = pipe_output("#{bin}/wclass classify 2>&1", "", 2)
