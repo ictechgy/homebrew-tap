@@ -6,26 +6,26 @@
 class Gartograph < Formula
   desc "Queryable dependency graph for Go codebases, built on go/packages"
   homepage "https://github.com/ictechgy/gartograph"
-  version "0.5.0"
+  version "0.6.0"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/ictechgy/gartograph/releases/download/v0.5.0/gartograph-0.5.0-darwin-arm64.tar.gz"
-      sha256 "f98a04a42ac1cde4e403c8463f3dbcac3d3589dea0252b71793d54a4da7040bb"
+      url "https://github.com/ictechgy/gartograph/releases/download/v0.6.0/gartograph-0.6.0-darwin-arm64.tar.gz"
+      sha256 "767c846bc314d6ec0f4a01253a65efd51547e158ed59a83680d429be3b3c5db9"
     else
-      url "https://github.com/ictechgy/gartograph/releases/download/v0.5.0/gartograph-0.5.0-darwin-amd64.tar.gz"
-      sha256 "49863da3092255be971eb0396f7f246a10851054b48fe3f8d47519255ca0cf56"
+      url "https://github.com/ictechgy/gartograph/releases/download/v0.6.0/gartograph-0.6.0-darwin-amd64.tar.gz"
+      sha256 "4835e17061756f3347490987b0f6caf1bf32baf66edbd43dcf0307455f2b9536"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/ictechgy/gartograph/releases/download/v0.5.0/gartograph-0.5.0-linux-arm64.tar.gz"
-      sha256 "7527bce098ce50d88f990053800a7db6ee70e0ae4b0699d70e5af5383767fec2"
+      url "https://github.com/ictechgy/gartograph/releases/download/v0.6.0/gartograph-0.6.0-linux-arm64.tar.gz"
+      sha256 "ce7bb02df5f579d2a49b5fc4a69c7937d7e8a63e5e6005a048737950131b18f3"
     else
-      url "https://github.com/ictechgy/gartograph/releases/download/v0.5.0/gartograph-0.5.0-linux-amd64.tar.gz"
-      sha256 "1f00eb9dcaab9d003dd83aa6da64496dd1a74b3895188c648f9868386f6a461e"
+      url "https://github.com/ictechgy/gartograph/releases/download/v0.6.0/gartograph-0.6.0-linux-amd64.tar.gz"
+      sha256 "4f7a34ae3dbdc3c1afed500020871f00e5e12ea032a56218c57c39d8162eb42a"
     end
   end
 
