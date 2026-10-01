@@ -6,26 +6,26 @@
 class Rustograph < Formula
   desc "Queryable dependency graph for Rust codebases, built on cargo metadata + syn"
   homepage "https://github.com/ictechgy/rustograph"
-  version "0.4.0"
+  version "0.4.1"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.0/rustograph-0.4.0-darwin-arm64.tar.gz"
-      sha256 "730967242b07d0c7f17e07d724354f128efda385eb7b8823d807f27013c6dd09"
+      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.1/rustograph-0.4.1-darwin-arm64.tar.gz"
+      sha256 "74ccc6e77fe2ceb9b35d65fd320a8c23e5c458a99a33c42b49c4b10fa542df96"
     else
-      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.0/rustograph-0.4.0-darwin-amd64.tar.gz"
-      sha256 "24089a3799e76d5dc87970a12527a0924f59564a08ee5f296a0d9fee3ac9389a"
+      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.1/rustograph-0.4.1-darwin-amd64.tar.gz"
+      sha256 "39e97501a14c2bf9231fe35a11446b8b2e80325b6a7d1bc8a49c48684bf8f57a"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.0/rustograph-0.4.0-linux-arm64.tar.gz"
-      sha256 "6d992dd735a80533da293900468408c99051212871644eea216d29842a3b474a"
+      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.1/rustograph-0.4.1-linux-arm64.tar.gz"
+      sha256 "4ae7abdaaa77f9f2e85a2f993896986afd49867710094b14eafb5936d6ff839b"
     else
-      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.0/rustograph-0.4.0-linux-amd64.tar.gz"
-      sha256 "f40d76445a5771353c4e64dc586aca34e15e687cf66996d6ff15794e5d2604b0"
+      url "https://github.com/ictechgy/rustograph/releases/download/v0.4.1/rustograph-0.4.1-linux-amd64.tar.gz"
+      sha256 "f2a28ccad072428362b101508b257ee84d155ac67b4a455f26cf453308105f33"
     end
   end
 
