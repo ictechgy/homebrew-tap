@@ -1,0 +1,160 @@
+name: Update release formulas
+
+on:
+  schedule:
+    - cron: "17 7 * * 1"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Validate and print the release update plan without opening a PR"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_ANALYTICS: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Run updater tests
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Check Ruby syntax
+        run: ruby -c Formula/cartograph.rb && ruby -c Formula/gartograph.rb && ruby -c Formula/rustograph.rb
+      - name: Verify current release plan
+        run: python3 scripts/update_formulas.py --timeout 30
+
+  prepare:
+    needs: preflight
+    if: github.event_name == 'schedule' || inputs.dry_run == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_ANALYTICS: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Verify and write candidate formulas
+        run: |
+          mkdir -p candidate/Formula
+          python3 scripts/update_formulas.py --write --timeout 30 > candidate/plan.json
+          cp Formula/cartograph.rb Formula/gartograph.rb Formula/rustograph.rb candidate/Formula/
+          git diff --check
+      - name: Detect formula changes
+        id: changes
+        run: |
+          if git diff --quiet -- Formula/cartograph.rb Formula/gartograph.rb Formula/rustograph.rb; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Upload verified candidate
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: verified-formula-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: candidate
+          if-no-files-found: error
+
+  verify:
+    needs: prepare
+    if: needs.prepare.outputs.changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            formula: cartograph
+          - os: macos-latest
+            formula: gartograph
+          - os: macos-latest
+            formula: rustograph
+          - os: ubuntu-latest
+            formula: gartograph
+          - os: ubuntu-latest
+            formula: rustograph
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_ANALYTICS: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Download verified candidate
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: verified-formula-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: candidate
+      - name: Install candidate formula from temporary tap
+        run: |
+          cp candidate/Formula/cartograph.rb candidate/Formula/gartograph.rb candidate/Formula/rustograph.rb Formula/
+          scripts/validate-formulas.sh "${{ matrix.formula }}"
+
+  publish:
+    needs: [prepare, verify]
+    if: needs.prepare.outputs.changed == 'true' && needs.verify.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BASE_BRANCH: ${{ github.event.repository.default_branch }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Download verified candidate
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: verified-formula-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: candidate
+      - name: Apply verified candidate
+        run: cp candidate/Formula/cartograph.rb candidate/Formula/gartograph.rb candidate/Formula/rustograph.rb Formula/
+      - name: Publish branch and pull request
+        run: |
+          git diff --check
+          branch="update-formulas-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/cartograph.rb Formula/gartograph.rb Formula/rustograph.rb
+          git commit -m "chore(release): update API impact formulas"
+          gh auth setup-git
+          git push --set-upstream origin "$branch"
+          body_file="$RUNNER_TEMP/pr-body.md"
+          cat > "$body_file" <<EOF
+          Automated release update.
+
+          Release metadata, asset downloads, SHA256 verification, Ruby syntax, and Homebrew install/test checks passed in [workflow run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}).
+
+          Review and merge this PR manually.
+          EOF
+          gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$branch" \
+            --title "chore(release): update API impact formulas" \
+            --body-file "$body_file"
