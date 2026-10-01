@@ -1,0 +1,36 @@
+name: Verify released tools
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  released-tools:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_ANALYTICS: '1'
+      HOMEBREW_NO_INSTALL_CLEANUP: '1'
+    steps:
+      - name: Install exact public tap versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew tap ictechgy/tap https://github.com/ictechgy/homebrew-tap.git
+          tap="$(brew --repo ictechgy/tap)"
+          test "$(git -C "$tap" rev-parse HEAD)" = "8013e135564b5ecad4045360c4342ae95c12e96c"
+          brew install ictechgy/tap/cartograph ictechgy/tap/gartograph ictechgy/tap/rustograph
+          test "$("$(brew --prefix ictechgy/tap/cartograph)/bin/cartograph" --version)" = "0.23.1"
+          test "$("$(brew --prefix ictechgy/tap/gartograph)/bin/gartograph" --version)" = "gartograph 0.9.1"
+          test "$("$(brew --prefix ictechgy/tap/rustograph)/bin/rustograph" --version)" = "rustograph 0.4.1"
+      - name: Test published formulas
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew test ictechgy/tap/cartograph
+          brew test ictechgy/tap/gartograph
+          brew test ictechgy/tap/rustograph
