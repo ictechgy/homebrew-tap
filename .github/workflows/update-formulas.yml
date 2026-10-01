@@ -132,6 +132,10 @@ jobs:
         with:
           name: verified-formula-candidate-${{ github.run_id }}-${{ github.run_attempt }}
           path: candidate
+      - name: Reject changes to the published formula base
+        run: |
+          git fetch --no-tags origin "$BASE_BRANCH"
+          git diff --exit-code "$GITHUB_SHA" FETCH_HEAD -- Formula/cartograph.rb Formula/gartograph.rb Formula/rustograph.rb
       - name: Apply verified candidate
         run: cp candidate/Formula/cartograph.rb candidate/Formula/gartograph.rb candidate/Formula/rustograph.rb Formula/
       - name: Publish branch and pull request
