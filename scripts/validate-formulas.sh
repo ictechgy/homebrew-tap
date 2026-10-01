@@ -9,6 +9,15 @@ fi
 export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_NO_ANALYTICS=1
 
+# Ubuntu runner의 사전 설치 Homebrew는 기본 PATH에 없으므로 공식 설치 경로를 추가한다.
+if ! command -v brew >/dev/null 2>&1; then
+  if [[ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    echo "Homebrew is unavailable; install Homebrew before validating formulas." >&2
+    exit 2
+  fi
+  export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+fi
+
 tap_owner="codex"
 run_id="${GITHUB_RUN_ID:-local}"
 attempt="${GITHUB_RUN_ATTEMPT:-$$}"
