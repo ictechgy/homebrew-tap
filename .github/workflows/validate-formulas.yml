@@ -1,0 +1,59 @@
+name: Validate formulas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-and-ruby:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_ANALYTICS: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Run updater tests
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Check Ruby syntax
+        run: ruby -c Formula/cartograph.rb && ruby -c Formula/gartograph.rb && ruby -c Formula/rustograph.rb
+
+  homebrew:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            formula: cartograph
+          - os: macos-latest
+            formula: gartograph
+          - os: macos-latest
+            formula: rustograph
+          - os: ubuntu-latest
+            formula: gartograph
+          - os: ubuntu-latest
+            formula: rustograph
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_ANALYTICS: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Install and test formula from temporary tap
+        run: scripts/validate-formulas.sh "${{ matrix.formula }}"
