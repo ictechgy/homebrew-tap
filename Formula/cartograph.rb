@@ -1,14 +1,22 @@
 class Cartograph < Formula
   desc "Queryable dependency graph for Swift and iOS codebases, built on IndexStoreDB"
   homepage "https://github.com/ictechgy/cartograph"
-  url "https://github.com/ictechgy/cartograph/releases/download/0.28.0/cartograph-0.28.0-macos-universal.tar.gz"
-  sha256 "df5a9a8fea14769e7904e0c315421c527c29907969d4fce00e0e28c013cc3b17"
+  url "https://github.com/ictechgy/cartograph/releases/download/0.29.0/cartograph-0.29.0-macos-universal.tar.gz"
+  sha256 "c84e3d0729d219122acbd68ee7a6815ad499c42cb1921174374c45e82684cd29"
   license "MIT"
 
   depends_on macos: :sonoma
 
   def install
     bin.install "cartograph"
+    libexec.install "Scripts/xcode-ios-scope.py"
+    libexec.install "Scripts/xcode-workspace-capture.py"
+    libexec.install "Scripts/xcode-workspace-inputs.py"
+    libexec.install "Scripts/xcode-local-package-evidence.py"
+    libexec.install "Scripts/xcode-local-package-inputs.py"
+    libexec.install "Scripts/cartograph-xcode-scope.py"
+    libexec.install "Scripts/cartograph-swiftpm-scope.py"
+    libexec.install "Scripts/cartograph-git-impact.py"
   end
 
   def caveats
@@ -33,6 +41,14 @@ class Cartograph < Formula
   end
 
   test do
+    assert_path_exists libexec/"xcode-ios-scope.py"
+    assert_path_exists libexec/"xcode-workspace-capture.py"
+    assert_path_exists libexec/"xcode-workspace-inputs.py"
+    assert_path_exists libexec/"xcode-local-package-evidence.py"
+    assert_path_exists libexec/"xcode-local-package-inputs.py"
+    assert_path_exists libexec/"cartograph-xcode-scope.py"
+    assert_path_exists libexec/"cartograph-swiftpm-scope.py"
+    assert_path_exists libexec/"cartograph-git-impact.py"
     assert_match version.to_s, shell_output("#{bin}/cartograph --version")
     assert_match "cartograph", shell_output("#{bin}/cartograph --help")
     # An empty directory has no index store, so the tool must fail with status 2
