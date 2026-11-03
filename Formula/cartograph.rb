@@ -1,8 +1,8 @@
 class Cartograph < Formula
   desc "Queryable dependency graph for Swift and iOS codebases, built on IndexStoreDB"
   homepage "https://github.com/ictechgy/cartograph"
-  url "https://github.com/ictechgy/cartograph/releases/download/0.29.0/cartograph-0.29.0-macos-universal.tar.gz"
-  sha256 "c84e3d0729d219122acbd68ee7a6815ad499c42cb1921174374c45e82684cd29"
+  url "https://github.com/ictechgy/cartograph/releases/download/0.30.0/cartograph-0.30.0-macos-universal.tar.gz"
+  sha256 "1f854a136e5f09d3ef013d58754e70ee77345c6da77ae6881141029467fbbae8"
   license "MIT"
 
   depends_on macos: :sonoma
